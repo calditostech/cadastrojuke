@@ -1,0 +1,116 @@
+<html>
+<head>
+<meta charset="UTF-8"> 
+ <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" 
+  integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+ <script src="https://cdn.jsdelivr.net/npm/vue"></script> 
+</head>
+<body>
+
+<div id="app">
+  <h1 class="jumbotron" style="text-align: center; margin-top: 10px; background-color: yellow; color: blue;">{{ message }}</h1>
+  <div class="col-15">
+<label style="color: blue;">Nome:</label>
+   <input v-model="contact.nome">
+<label style="color: blue;">Sobrenome:</label>
+   <input type="text" v-model="contact.sobrenome">
+<label style="color: blue;">Email:</label>
+   <input type="email" v-model="contact.email">
+<label style="color: blue;">Telefone:</label>
+   <input type="telefone" v-model="contact.telefone">
+<label style="color: blue;">Tipo Documento:</label>
+<select v-model="contact.selected">
+  <option disabled value="">Escolha um Documento:</option>
+  <option>CPF</option>
+  <option>CNPJ</option>
+</select>
+<label style="color: blue;">Numero Documento:</label>
+<input type="text" v-model="contact.numdoc">
+   <br>
+   <button class="mt-3 mb-3 btn btn-primary" 
+   @click="add()">Adicionar</button>
+  </div>
+  
+  <table class="table">
+    <thead>
+   <tr>
+     <th scope="col">#</th>
+     <th scope="col">Nome Completo</th>
+     <th scope="col">Email</th>
+     <th scope="col">Telefone</th>
+     <th scope="col">Tipo de Documento</th>
+     <th scope="col">Numero do Documento</th>
+   </tr>
+    </thead>
+    <tbody>
+   <tr v-for="item in list">
+    <th scope="row">{{ item.id }}</th>
+    <td>{{ item.nome }} {{ item.sobrenome }}</td>
+    <td>{{ item.email }}</td>
+    <td>{{ item.telefone }}</td>
+    <td>Documento selecionado: {{ item.selected }}</td>
+    <td>{{ item.numdoc }}</td>
+    <td>
+     <button @click="edit(item)" class="btn btn-info">Editar</button>
+     <button @click="remove(item)" class="btn btn-danger">Excluir</button>
+    </td>
+   </tr>
+    </tbody>
+  </table>
+ </div>
+ <script>
+
+ new Vue({
+  
+   el: '#app',
+   
+   data: {
+     message: 'Cadastro de Pessoas',
+     contact: {
+       id: 0,
+       nome: null,
+       sobrenome: null,
+       email: null,
+       telefone: null,
+       selected: ''
+
+     },
+     index: null,
+     list: []
+   },
+  
+   mounted() {
+  const contacts = JSON.parse(localStorage.getItem('contacts'))
+  this.list = contacts ? contacts : []
+   },
+   
+   methods: {
+  add() {   
+   if(this.contact.id === 0) {
+    this.contact.id = this.list.length + 1
+    this.list.push(this.contact)
+    
+   } else {
+    this.list[this.index] = this.contact
+   }
+   localStorage.setItem('contacts', JSON.stringify(this.list))
+   this.contact = {id: 0, nome: null, sobrenome: null, email: null, telefone: null, selected: ''}
+  },
+  
+  remove(item) {
+   const idx = this.list.indexOf(item)
+   this.list.splice(idx, 1)
+   localStorage.setItem('contacts', JSON.stringify(this.list))
+  }, 
+  
+  edit(item) {
+   this.index = this.list.indexOf(item)
+   this.contact = Object.assign({}, item);
+   localStorage.setItem('contacts', JSON.stringify(this.list))
+  }  
+   }
+   
+ })
+</script>
+</body>
+</html>
